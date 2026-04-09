@@ -22,7 +22,7 @@ function Wallet ({
         const pKeyBytes = hexToBytes(pKey)
 
         // STEP 2: Derive the Public Key bytes from the Private Key bytes
-        const publicKey = secp.getPublicKey(pKeyBytes)
+        const publicKey = secp.getPublicKey(pKeyBytes, true)
 
         // STEP 3: Convert the public key bytes back to a Hex string
         const derivedAddress = toHex(publicKey)

@@ -59,13 +59,6 @@ function Wallet ({
         ></input>
       </label>
 
-      <div
-        className='address-display'
-        style={{ fontSize: '12px', margin: '10px 0', color: '#666' }}
-      >
-        Address: {address}
-      </div>
-
       <div className='balance'>Balance: {balance}</div>
     </div>
   )

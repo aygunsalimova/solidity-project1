@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const port = 3043
+const secp = require('ethereum-cryptography/secp256k1')
+const { hextoBytes, toHex } = require('ethereum-cryptography/utils')
 
 app.use(cors())
 app.use(express.json())
@@ -22,10 +24,25 @@ app.get('/balance/:address', (req, res) => {
 })
 
 app.post('/send', (req, res) => {
-  const { sender, recipient, amount } = req.body
+  const { recipient, amount, messageHash, signature, recoveryBit } = req.body
 
+  // STEP 1: Recover the sender's public key from the signature
+  const senderPublicKey = secp.recoverPublicKey(
+    hexToBytes(messageHash),
+    hexToBytes(signature),
+    recoveryBit,
+    true
+  )
+
+  const sender = toHex(senderPublicKey)
+
+  // STEP 2: Validate recipient exists
+  if (balances[recipient] === undefined) {
+    return res.status(400).send({ message: 'Recipient address not found!' })
+  }
+
+  // STEP 3: Validate sender exists and has enough funds
   setInitialBalance(sender)
-  setInitialBalance(recipient)
 
   if (balances[sender] < amount) {
     res.status(400).send({ message: 'Not enough funds!' })
